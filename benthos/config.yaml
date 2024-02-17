@@ -1,0 +1,9 @@
+input:
+  stdin: {}
+
+pipeline:
+  processors: 
+    - reverse: {}
+
+output: 
+  stdout: {}
