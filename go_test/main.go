@@ -21,7 +21,7 @@ func main() {
 	// branch_list from yaml config
 	var branch_list [6]string = [6]string{"A", "B", "C", "D", "E", "F"}
 
-	var branch_seconds [6]int = [6]int{3, 40, 3, 3, 3, 3}
+	var branch_seconds [6]int = [6]int{3, 15, 3, 3, 3, 3}
 
 	// NS - Not Started
 	// F - Finished
@@ -79,7 +79,7 @@ func main() {
 				}(branch_name, i, branch_second)
 			}
 		}
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 1)
 	}
 }
 
