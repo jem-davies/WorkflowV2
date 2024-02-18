@@ -83,7 +83,7 @@ func main() {
 			// 	fmt.Print(i, idx, "\n")
 			// }
 		}
-		//time.Sleep(time.Second * 10)
+		time.Sleep(time.Millisecond * 100)
 	}
 }
 
