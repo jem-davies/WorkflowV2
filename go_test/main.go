@@ -63,9 +63,10 @@ func main() {
 			if allZeros(row) && branch_status[i] == "NS" {
 				branch_name := branch_list[i]
 				branch_second := branch_seconds[i]
+				message := branchStatusMessage{index: i, status: "R"}
+				statusChannel <- message
+
 				go func(branch_name string, index int, branch_second int) {
-					message := branchStatusMessage{index: index, status: "R"}
-					statusChannel <- message
 
 					fmt.Printf("Node: id=%s, started\n", branch_name)
 
@@ -82,7 +83,7 @@ func main() {
 			// 	fmt.Print(i, idx, "\n")
 			// }
 		}
-		time.Sleep(time.Second * 10)
+		//time.Sleep(time.Second * 10)
 	}
 }
 
