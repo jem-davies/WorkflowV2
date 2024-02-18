@@ -78,10 +78,6 @@ func main() {
 					updateChannel <- index
 				}(branch_name, i, branch_second)
 			}
-			// print("\n")
-			// for i, idx := range transposed_matrix {
-			// 	fmt.Print(i, idx, "\n")
-			// }
 		}
 		time.Sleep(time.Millisecond * 100)
 	}
