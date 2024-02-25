@@ -1,6 +1,6 @@
 module benthos_workflow_v2
 
-go 1.22.0
+go 1.20
 
 require (
 	cloud.google.com/go v0.110.8 // indirect
