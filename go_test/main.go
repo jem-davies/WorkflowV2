@@ -7,6 +7,15 @@ import (
 
 func main() {
 	// workflow_matrix from yaml config
+
+	/*
+	   		 /--> B -------------|--> D
+	        /                   /
+	   A --|          /--> E --|
+	        \--> C --|          \
+	   			 	  \----------|---> F
+	*/
+
 	var workflow_matrix [][]int = [][]int{
 		{0, 1, 1, 0, 0, 0},
 		{0, 0, 0, 1, 0, 0},
@@ -15,6 +24,9 @@ func main() {
 		{0, 0, 0, 1, 0, 1},
 		{0, 0, 0, 0, 0, 0},
 	}
+
+	// TODO check that no circular dependency exists
+	// TODO check that no node has a dependency to itself
 
 	// branch_list from yaml config
 	var branch_list []string = []string{"A", "B", "C", "D", "E", "F"}
