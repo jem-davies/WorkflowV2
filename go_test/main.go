@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// workflow_matrix from yaml config
-	var workflow_matrix [6][6]int = [6][6]int{
+	var workflow_matrix [][]int = [][]int{
 		{0, 1, 1, 0, 0, 0},
 		{0, 0, 0, 1, 0, 0},
 		{0, 0, 0, 0, 1, 1},
@@ -17,15 +17,15 @@ func main() {
 	}
 
 	// branch_list from yaml config
-	var branch_list [6]string = [6]string{"A", "B", "C", "D", "E", "F"}
+	var branch_list []string = []string{"A", "B", "C", "D", "E", "F"}
 
 	// for simulating the running of a go routine with different lengths of time
-	var branch_seconds [6]int = [6]int{3, 15, 3, 3, 3, 3}
+	var branch_seconds []int = []int{3, 15, 3, 3, 3, 3}
 
 	// NS - Not Started
 	// F - Finished
 	// R - Running
-	var branch_status [6]string = [6]string{"NS", "NS", "NS", "NS", "NS", "NS"}
+	var branch_status []string = []string{"NS", "NS", "NS", "NS", "NS", "NS"}
 
 	for !isAllFinished(branch_status) {
 		for i, status := range branch_status {
@@ -45,7 +45,7 @@ func main() {
 	fmt.Println("DAG Workflow execution finished!")
 }
 
-func isColumnAllZeros(matrix [6][6]int, columnIdx int) bool {
+func isColumnAllZeros(matrix [][]int, columnIdx int) bool {
 	for i := 0; i < len(matrix); i++ {
 		if matrix[i][columnIdx] != 0 {
 			return false
@@ -54,14 +54,14 @@ func isColumnAllZeros(matrix [6][6]int, columnIdx int) bool {
 	return true
 }
 
-func zeroOutRow(matrix [6][6]int, rowIdx int) [6][6]int {
+func zeroOutRow(matrix [][]int, rowIdx int) [][]int {
 	for i := 0; i < len(matrix); i++ {
 		matrix[rowIdx][i] = 0
 	}
 	return matrix
 }
 
-func isAllFinished(branch_status [6]string) bool {
+func isAllFinished(branch_status []string) bool {
 	for i := 0; i < len(branch_status); i++ {
 		if branch_status[i] != "F" {
 			return false
