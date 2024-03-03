@@ -9,11 +9,11 @@ func main() {
 	// workflow_matrix from yaml config
 
 	/*
-	   		 /--> B -------------|--> D
+	         /--> B -------------|--> D
 	        /                   /
 	   A --|          /--> E --|
 	        \--> C --|          \
-	   			 	  \----------|---> F
+	                  \----------|---> F
 	*/
 
 	var workflow_matrix [][]int = [][]int{
