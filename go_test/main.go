@@ -5,9 +5,6 @@ import (
 	"time"
 )
 
-// TODO - use a lock rather than the sleep on line 93
-// TODO - alter from using array of size 6 to slices
-
 func main() {
 	// workflow_matrix from yaml config
 	var workflow_matrix [6][6]int = [6][6]int{
@@ -18,9 +15,11 @@ func main() {
 		{0, 0, 0, 1, 0, 1},
 		{0, 0, 0, 0, 0, 0},
 	}
+
 	// branch_list from yaml config
 	var branch_list [6]string = [6]string{"A", "B", "C", "D", "E", "F"}
 
+	// for simulating the running of a go routine with different lengths of time
 	var branch_seconds [6]int = [6]int{3, 15, 3, 3, 3, 3}
 
 	// NS - Not Started
@@ -28,102 +27,45 @@ func main() {
 	// R - Running
 	var branch_status [6]string = [6]string{"NS", "NS", "NS", "NS", "NS", "NS"}
 
-	type branchStatusMessage struct {
-		index  int
-		status string
-	}
-	// transpose the matrix for convenience
-	transposed_matrix := transposeMatrix(workflow_matrix)
+	for !isAllFinished(branch_status) {
+		for i, status := range branch_status {
+			if isColumnAllZeros(workflow_matrix, i) && status == "NS" {
+				branch_status[i] = "R"
 
-	print("\n")
-	for i, idx := range transposed_matrix {
-		fmt.Print(i, idx, "\n")
-	}
-
-	statusChannel := make(chan branchStatusMessage)
-	updateChannel := make(chan int)
-
-	go func() {
-		for {
-			index := <-updateChannel
-			transposed_matrix = zeroOutColumn(transposed_matrix, index)
-		}
-	}()
-
-	go func() {
-		for {
-			statusUpdate := <-statusChannel
-			branch_status[statusUpdate.index] = statusUpdate.status
-			//fmt.Print(branch_status, '\n')
-		}
-	}()
-
-	for {
-		for i, row := range transposed_matrix {
-			if allZeros(row) && branch_status[i] == "NS" {
-				branch_name := branch_list[i]
-				branch_second := branch_seconds[i]
-				message := branchStatusMessage{index: i, status: "R"}
-				statusChannel <- message
-
-				go func(branch_name string, index int, branch_second int) {
-
+				go func(branch_name string, i int, branch_second int) {
 					fmt.Printf("Node: id=%s, started\n", branch_name)
-
-					time.Sleep(time.Second * time.Duration(branch_second)) // simulate the running of a go routine
-
+					time.Sleep(time.Second * time.Duration(branch_second))
 					fmt.Printf("Node: id=%s, finished\n", branch_name)
-					message = branchStatusMessage{index: index, status: "F"}
-					statusChannel <- message
-					updateChannel <- index
-				}(branch_name, i, branch_second)
+					workflow_matrix = zeroOutRow(workflow_matrix, i)
+					branch_status[i] = "F"
+				}(branch_list[i], i, branch_seconds[i])
 			}
 		}
-		time.Sleep(time.Millisecond * 1)
 	}
+	fmt.Println("DAG Workflow execution finished!")
 }
 
-func transposeMatrix(matrix [6][6]int) [6][6]int {
-	var transposed [6][6]int
-
-	for i := 0; i < 6; i++ {
-		for j := 0; j < 6; j++ {
-			transposed[i][j] = matrix[j][i]
-		}
-	}
-
-	return transposed
-}
-
-func allZeros(arr [6]int) bool {
-	for _, v := range arr {
-		if v != 0 {
+func isColumnAllZeros(matrix [6][6]int, columnIdx int) bool {
+	for i := 0; i < len(matrix); i++ {
+		if matrix[i][columnIdx] != 0 {
 			return false
 		}
 	}
 	return true
 }
 
-func zeroOutColumn(matrix [6][6]int, columnIndex int) [6][6]int {
-	for i := 0; i < 6; i++ {
-		matrix[i][columnIndex] = 0
+func zeroOutRow(matrix [6][6]int, rowIdx int) [6][6]int {
+	for i := 0; i < len(matrix); i++ {
+		matrix[rowIdx][i] = 0
 	}
 	return matrix
 }
 
-/*
-
-Node: id=A, started
-Node: id=A, finished
-Node: id=C, started
-Node: id=B, started
-Node: id=C, finished
-Node: id=E, started
-Node: id=E, finished
-Node: id=F, started
-Node: id=F, finished
-Node: id=B, finished
-Node: id=D, started
-Node: id=D, finished
-
-*/
+func isAllFinished(branch_status [6]string) bool {
+	for i := 0; i < len(branch_status); i++ {
+		if branch_status[i] != "F" {
+			return false
+		}
+	}
+	return true
+}
